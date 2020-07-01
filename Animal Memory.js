@@ -1,7 +1,11 @@
 let animals = ['Images/Cat.jpg', 'Images/Deer.jpg', 'Images/Dog.jpg', 'Images/Elephant.jpg', 'Images/Lion.jpg', 'Images/Rabbit.jpg', 'Images/RedPanda.jpg', 'Images/Seal.jpg', 'Images/Cat.jpg', 'Images/Deer.jpg', 'Images/Dog.jpg', 'Images/Elephant.jpg', 'Images/Lion.jpg', 'Images/Rabbit.jpg', 'Images/RedPanda.jpg', 'Images/Seal.jpg']
 let shuffledCards;
+let noTimer = true;
 let cards = [];
 let currentCards = [];
+let openCards = [];
+let welcome;
+let game;
 
 function startGame() {
     switchDivs();
@@ -17,15 +21,28 @@ function switchDivs() {
 }
 
 function checkCards(cardNumber) {
-    displayCard(cardNumber);
-    currentCards.push(cardNumber)
-    if (currentCards.length === 2) {
-        if (cards[currentCards[0]].style.backgroundImage !== cards[currentCards[1]].style.backgroundImage) {
-            setTimeout(() => {
-                cards[currentCards[0]].style.backgroundImage = 'url("Images/Cards.jpg"';
-                cards[currentCards[1]].style.backgroundImage = 'url("Images/Cards.jpg"';
-                currentCards = [];
-            }, 1000);
+    if (noTimer === true && !openCards.includes(cardNumber)) {
+        displayCard(cardNumber);
+        currentCards.push(cardNumber)
+        if (currentCards.length === 2) {
+            noTimer = false;
+            if (cards[currentCards[0]].style.backgroundImage !== cards[currentCards[1]].style.backgroundImage) {
+                setTimeout(() => {
+                    cards[currentCards[0]].style.backgroundImage = 'url("Images/Cards.jpg"';
+                    cards[currentCards[1]].style.backgroundImage = 'url("Images/Cards.jpg"';
+                    currentCards = [];
+                    noTimer = true;
+                }, 1000);
+            }
+            else {
+                setTimeout(() => {
+                    openCards.push(currentCards[0]);
+                    openCards.push(currentCards[1]);
+                    currentCards = [];
+                    noTimer = true;
+                    checkWin();
+                }, 1000);
+            }
         }
     }
 }
@@ -47,4 +64,13 @@ function assignCards() {
 
 function displayCard(number) {
     cards[number].style.backgroundImage = `url(${animals[number]})`;
+}
+
+function checkWin() {
+    if (openCards.length === 16) {
+        let welcome = document.getElementById("welcome");
+        let game = document.getElementById("game");
+        welcome.style.display = "block";
+        game.style.display = "none";
+    }
 }
